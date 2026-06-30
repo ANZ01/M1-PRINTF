@@ -6,33 +6,44 @@
 /*   By: dmaurici <dmaurici@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/23 12:52:26 by dmaurici          #+#    #+#             */
-/*   Updated: 2026/06/23 15:06:14 by dmaurici         ###   ########.fr       */
+/*   Updated: 2026/06/24 15:24:28 by dmaurici         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 #include <stdarg.h>
 
-int	conversion_reader(char symbol)
+static int	ft_conversion(char symbol, va_list args)
 {
 	if (symbol == 'c')
-		ft_putchar()
+		return (ft_putchar((char)va_arg(args, int)));
+	if (symbol == 's')
+		return (ft_putstr(va_arg(args, char *)));
+	else if (symbol == '%')
+		return (ft_putchar('%'));
+	return (-1);
 }
 int ft_printf(const char *format, ...)
 {
-	unsigned int	count;
+	int		len;
+	int		check;
+	va_list	args;
 
-	count = 0;
+	va_start(args, format);
+	len = 0;
 	while (*format)
 	{
 		if (*format == '%')
 		{
-		count += conversion_reader(*format + 1);
-			format++;
-		}	
+			check = ft_conversion(*++format, args);
+			if(check == -1)
+				return (-1);
+			len += check;
+		}
 		else
-			count += ft_putchar(*format);	
+			len +=ft_putchar(*format);
 		format++;
 	}
-	return (count);
+	va_end(args);
+	return (len);
 }
